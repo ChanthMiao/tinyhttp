@@ -13,6 +13,7 @@ import com.alibaba.fastjson.*;
  * 
  * @author Chanth Miao
  * @version 1.0
+ * @see team.aurorahub.learn.tinyhttp.config.tinyLocation
  */
 public class config {
     private String configFilePath;
@@ -69,7 +70,7 @@ public class config {
             customed = true;
             if (customed && confObject.containsKey("domain")) {
                 domain = confObject.getString("domain");
-            } else{
+            } else {
                 customed = false;
             }
             if (customed && confObject.containsKey("port")) {
@@ -88,7 +89,7 @@ public class config {
                 if (redirect && confObject.containsKey("redirectHost") && confObject.containsKey("redirectPort")) {
                     redirectHost = confObject.getString("redirectHost");
                     redirectPort = confObject.getIntValue("redirectPort");
-                } else if (redirect){
+                } else if (redirect) {
                     customed = false;
                 }
             } else {
@@ -114,7 +115,7 @@ public class config {
                         customed = false;
                     }
                 }
-                if (customed){
+                if (customed) {
                     paths.removeFirst();
                 }
             } else {
@@ -187,29 +188,36 @@ public class config {
     }
 
     /**
-     * Get all the location paths in the format of LinkedList<String>
+     * Get all the location paths in the format of {@code  LinkedList<String>}
      * 
-     * @return A LinkedList<String> that contains all the location paths.
+     * @return A {@code  LinkedList<String>} that contains all the location paths.
      */
     public LinkedList<String> getPaths() {
         return paths;
     }
 
     /**
-     * Get specific location(tinyLocation) acroding to given path.
+     * Get specific {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
+     * tinyLocation} acroding to given path.
      * 
      * @param path A str that can be used asthe label of tinyLoaction.
-     * @return A tinyLocation instance.
+     * @return A {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
+     *         tinyLocation} instance.
      */
     public tinyLocation getLocation(String path) {
         return locations.get(path);
     }
 
     /**
-     * Add tinyLocation into current config. The paths list will also be updated.
+     * Add {@link team.aurorahub.learn.tinyhttp.config.tinyLocation tinyLocation}
+     * into current config. The paths list will also be updated.
      * 
-     * @param newLocation The instance of tinyLocation
-     * @param newPath     The label for new tinyLocation.
+     * @param newLocation The instance of
+     *                    {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
+     *                    tinyLocation}
+     * @param newPath     The label for new
+     *                    {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
+     *                    tinyLocation}, in {@code String}.
      */
     public void addLocation(tinyLocation newLocation, String newPath) {
         if (newLocation.check() == false) {
@@ -241,7 +249,7 @@ public class config {
     /**
      * Check if this website should be redirect.
      * 
-     * @return True, if it is redirected.
+     * @return {@code true} if it is redirected.
      */
     public boolean isRedirect() {
         return redirect;
@@ -250,23 +258,23 @@ public class config {
     /**
      * Set the redirect flag to true or false.
      * 
-     * @param NewRedirect The boolen flag.
+     * @param NewRedirect The {@code boolean} flag.
      */
     public void setRedirect(boolean NewRedirect) {
         redirect = NewRedirect;
     }
 
     /**
-     * Get the redirect host in string, if it exists.
+     * Get the redirect host in {@code String} if it exists.
      * 
-     * @return The redirct host. If it does not exist, return null.
+     * @return The redirct host. If it does not exist, return {@code null}.
      */
     public String getRedirectHost() {
         return redirectHost;
     }
 
     /**
-     * Set the redirect host, useless when the isRedirect flag is false.
+     * Set the redirect host, useless when the isRedirect flag is {@code false}.
      * 
      * @param newRedirectHost The new rendirect host.
      */
@@ -277,15 +285,16 @@ public class config {
     /**
      * Get the redirect port number of this website.
      * 
-     * @return The redirect port number. may be -1, when the isRedirect flag is
-     *         false.
+     * @return The redirect port number. may be {@code -1} when the isRedirect flag
+     *         is {@code false}.
      */
     public int getRedirectPort() {
         return redirectPort;
     }
 
     /**
-     * Set the redirct port number, useless when the isRedirect flag is false.
+     * Set the redirct port number, useless when the isRedirect flag is
+     * {@code false}.
      * 
      * @param newRedirectPort The new redirect port.
      */

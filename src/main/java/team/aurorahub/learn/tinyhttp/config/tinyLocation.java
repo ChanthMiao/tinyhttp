@@ -8,6 +8,7 @@ import com.alibaba.fastjson.*;
  * 
  * @author Chanth Miao
  * @version 1.0
+ * 
  */
 public class tinyLocation implements validLC {
     private JSONObject settings;
@@ -20,7 +21,8 @@ public class tinyLocation implements validLC {
     }
 
     /**
-     * @param refJSONObj The outer data to be loaded.
+     * @param refJSONObj The outer data to be loaded in the type of
+     *                   {@code JSONObject}
      */
     @Override
     public void load(JSONObject refJSONObj) {
@@ -30,7 +32,7 @@ public class tinyLocation implements validLC {
     /**
      * Check the validity of the instance it belongs to.
      * 
-     * @return True, if the instance is valid.
+     * @return {@code true}, if the instance is valid.
      */
     @Override
     public boolean check() {
@@ -46,7 +48,7 @@ public class tinyLocation implements validLC {
     /**
      * Check if the location is accessiable.
      * 
-     * @return True, if this loaction is accessiable.
+     * @return {@code true}, if this loaction is accessiable.
      */
     @Override
     public Boolean isAccessiable() {
@@ -59,7 +61,8 @@ public class tinyLocation implements validLC {
     /**
      * Get the handler type of this location.
      * 
-     * @return 0 for local static files, 1 for dynamic contents. Others are unknown.
+     * @return {@code 0} for local static files, {@code 1} for dynamic contents.
+     *         Others are unknown.
      */
     @Override
     public int getHandlerType() {
@@ -72,7 +75,7 @@ public class tinyLocation implements validLC {
     /**
      * Get the handler path of this loaction.
      * 
-     * @return A String that descrpts the handler path.
+     * @return A {@code String} that descrpts the handler path.
      */
     @Override
     public String getHandlerPath() {
@@ -85,8 +88,8 @@ public class tinyLocation implements validLC {
     /**
      * Set the handler type of this location.
      * 
-     * @param type 0 for local static files, 1 for dynamic contents. Others are
-     *             unknown.
+     * @param type {@code 0} for local static files, {@code 1} for dynamic contents.
+     *             Others are unknown.
      */
     @Override
     public void setHandlerType(int type) {
@@ -96,7 +99,7 @@ public class tinyLocation implements validLC {
     /**
      * Set the handler path of this location.
      * 
-     * @param handlerPath A String that descrpts the handler path.
+     * @param handlerPath A {@code String} that descrpts the handler path.
      */
     @Override
     public void setHandlerPath(String handlerPath) {
@@ -106,7 +109,7 @@ public class tinyLocation implements validLC {
     /**
      * Set the accessiable of this location.
      * 
-     * @param accessiable True, for accessiable.
+     * @param accessiable {@code true}, for accessiable.
      */
     @Override
     public void setAccessible(boolean accessiable) {
