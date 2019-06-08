@@ -8,8 +8,12 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+/**
+ * @author Chanth Miao
+ * @version 1.0
+ */
 public class testConfig {
-    private static final String testConfPath = "resources\\test.json";
+    private static final String testConfPath = "resources\\test\\test.json";
 
     private config sampleConfig;
 

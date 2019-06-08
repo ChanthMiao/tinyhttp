@@ -6,6 +6,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+ * @author Chanth Miao
+ * @version 1.0
+ */
 public class testLocation {
     private static final String baseStr = "{\"type\":0,\"handler\":\"plain\",\"accessiable\": true}";
 
