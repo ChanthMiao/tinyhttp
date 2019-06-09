@@ -17,7 +17,7 @@ public class request extends tinyHttpMsg {
     protected String tinyMethod;
     protected String httpVer;
     protected String tinyQuery;
-    protected int paramN;
+    protected int queryNums;
     protected HashMap<String, String> queryParams;
 
     /**
@@ -66,11 +66,15 @@ public class request extends tinyHttpMsg {
         } else {
             throw new RuntimeException("Not a http request!");
         }
+        // Format it.
+        if (tinyUri.endsWith("/") == false) {
+            tinyUri = tinyUri + "/";
+        }
         if (tinyUri.indexOf('?') != -1) {
             fields = tinyUri.split("?");
             tinyUri = fields[0];
             tinyQuery = fields[1];
-            paramN = getURLParams(fields[1], queryParams);
+            queryNums = getURLParams(fields[1], queryParams);
         }
         tmp = safeHeaderLineReader(tinySocketReader);
         while (tmp.length() > 0) {
@@ -85,7 +89,10 @@ public class request extends tinyHttpMsg {
             contentLen = 0;
         }
         try {
-            inSocket.transferTo(tinyBody);
+            if (contentLen > 0) {
+                inSocket.transferTo(tinyBody);
+            }
+            // inSocket.transferTo(tinyBody);
             if (headerFields.get("Connection").trim().equals("close")) {
                 inSocket.close();
             }
@@ -109,7 +116,7 @@ public class request extends tinyHttpMsg {
         } else {
             StringBuilder newHeader = new StringBuilder();
             String firstLine;
-            if (paramN > 0) {
+            if (queryNums > 0) {
                 firstLine = tinyMethod + BLANK + tinyUri + "?" + tinyQuery + BLANK + httpVer + CRLF;
             } else {
                 firstLine = tinyMethod + BLANK + tinyUri + BLANK + httpVer + CRLF;

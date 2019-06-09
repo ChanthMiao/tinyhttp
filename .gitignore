@@ -6,3 +6,4 @@ target
 *.class
 out
 .idea
+dependency-reduced-pom.xml

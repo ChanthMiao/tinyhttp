@@ -206,6 +206,42 @@ public class ioTools {
     }
 
     /**
+     * Get {@code File} instance by uri.
+     * 
+     * @param uri  The specific uri, ended with {@code '/'}
+     * @param root The web root directory.
+     * @return The {@code File} instance relative to uri. {@code null}, if not
+     *         exists.
+     */
+    public static File getFileByUri(String uri, String root) {
+        int len = uri.lastIndexOf('/');
+        uri = uri.substring(0, len);
+        String[] hiddenExt = new String[2];
+        hiddenExt[0] = ".html";
+        hiddenExt[1] = ".htm";
+        String target = root + uri;
+        File gotIt = new File(target);
+        boolean isExists = gotIt.exists();
+        if (isExists == false && target.indexOf('.') == -1) {
+            return null;
+        } else if (isExists == false) {
+            for (String ext : hiddenExt) {
+                target = uri + root + ext;
+                gotIt = new File(target);
+                isExists = gotIt.exists();
+                if (isExists) {
+                    break;
+                }
+            }
+        }
+        if (isExists) {
+            return gotIt;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get parse {@code String} of specific http status code.
      * 
      * @param code

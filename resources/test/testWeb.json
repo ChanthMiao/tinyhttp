@@ -1,22 +1,16 @@
 {
-    "root": "resouces/testWeb",
+    "root": "resources/testWeb",
     "domain": "localhost",
     "port": 80,
     "redirect": false,
     "paths": [
-        "/console",
         "/api",
         "/"
     ],
-    "/console": {
-        "type": 0,
-        "handler": "fliter",
-        "accessiable": false
-    },
     "/api": {
-        "type": 1,
-        "handler": "cgi",
-        "accessiable": true
+        "type": 0,
+        "handler": "plain",
+        "accessiable": false
     },
     "/": {
         "type": 0,
