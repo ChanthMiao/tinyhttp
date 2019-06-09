@@ -3,119 +3,157 @@ package team.aurorahub.learn.tinyhttp{
 
     package team.aurorahub.learn.tinyhttp.config{
         interface validLC {
-        +load(refMap : JSONObject) : void
-        +check() : boolean
-        +getPath() : String
-        +setPath(path : String) : void
-        +isAccessiable() : Boolean
-        +setAccessible(accessiable : boolean) : void
-        +httpHandlerType() : int
-        +setHttpHandlerType(type : int) : void
-        +getHttpHandlerPath() : String
-        +setHttpHandlerPath(handlerPath : String) : void
+            +load(refMap : JSONObject) : void
+            +check() : boolean
+            +getPath() : String
+            +setPath(path : String) : void
+            +isAccessiable() : Boolean
+            +setAccessible(accessiable : boolean) : void
+            +getHandlerType() : int
+            +setHandlerType(type : int) : void
+            +getHandlerPath() : String
+            +setHandlerPath(handlerPath : String) : void
         }
 
-        class location {
-            +location()
+        class tinyLocation {
+            -settings : JSONObject
+            +tinyLocation()
         }
 
-        validLC <.. location
+        tinyLocation ..|> validLC
 
         class config{
-            -builder : StringBuilder
+            -configFilePath : String
             -customed : boolean
             -domain : String
             -port : int
             -root : String
             -redirect : boolean
+            -redirectHost : String
+            -redirectPort : String
             -paths : LinkedList<String>
-            -locations : HashMap<String, location>
+            -locations : HashMap<String, tinyLocation>
             +config()
             +config(confPath : String)
+            +getConfigFilePath() : String
             +getDomain() : String
             +setDomain(newDomain : String) : void
             +getPort() : int
             +setPort(newPort : int) : void
             +getPaths() : LinkedList<String>
-            +getLocation(path : String) : location
-            +addLocation(newLocation : location) : void
+            +getLocation(path : String) : tinyLocation
+            +addLocation(newLocation : tinyLocation, newPath : String) : void
             +getRoot() : String
             +setRoot(newRoot : String) : void
             +isRedirect() : boolean
             +setRedirect(newRedirct : boolean) : void
         }
 
-        config *--|> location
+        config *--> tinyLocation
     }
 
     package team.aurorahub.learn.tinyhttp.model{
-        class request{
-            -method : String
-            -uri : String
-            -param : String
-            -requestboy : String
-            -map : HashMap<String, LinkedList<String>>
-            -in : InputStream
-            -Request()
-            +Request(newIn : InputStream)
-            +getUri() : String
-            +setUri(newUri : String) : void
-            -decode(value : String, code : String) : void
+        class tinyHttpMsg{
+            #contentLen : int
+            #headerFields : HashMap<String, String>
+            #tinyBody : ByteArrayOutputStream
+            #inSocket : InputStream
+            +tinyHttpMsg(newInput : InputStream)
+            #{abstract}rebuildHeader() : String
+            +{abstract}readAllBytesNow() : int
+            +getContentLength() : int
             +getParam(key : String) : String
-            +getParams(key : String) : String[]
-            +parseMessage() : void
-            -pushToMap(newParam : String) : void
+            +setParam(key : String, value : String) : String
+            +sendTo(out : OutputStream) : int
+            +transferTo(out : OutputStream) : int
+            +getInputStream() : InputStream
         }
 
+        class request{
+            #tinyUri : String
+            #tinyMethod : String
+            #httpVer : String
+            #queryParams : HashMap<String, String>
+            #tinyQuery : String
+            +Request(newIn : InputStream)
+            +getUri() : String
+            +getHttpMethod() : String
+            +getHttpVer() : String
+        }
+
+        tinyHttpMsg <|-- request
+
         class response{
-            -CRLF : String
-            -BLANK : String
-            -headerInfo : StringBuilder
-            -content : StringBuilder
-            -buffOut : BufferedWriter
-            -len : int
-            -outStream : OutputStream
-            +response(newOutStream : OutputStream)
-            +createHeaderInfo(code : int)
+            #httpVer : String
+            #statusCode : int
+            #codeParse : String
+            #fromOuter : boolean
+            +response(newInput : InputStream)
+            +response(code : int)
+            +writeBytes0(src : byte[], len : int) : int
             +print(msg : String) : response
             +println(msg : String) : response
-            +close() : void
+            +loadFile(path : String) : response
         }
+
+        tinyHttpMsg <|-- response
     }
     package team.aurorahub.learn.tinyhttp.handler{
         interface handler{
-            +handle() : void
+            +handle(in : InputStream, out : OutputStream) : void
         }
-        class handleImpPlain{
-            -client : request
-            -server : response
-            +handleImp(newClient : request, newServer : response)
+        class handleImp{
+            -setting : config
+            +handleImp(myset : config)
+            -getLocation(uri : String) : String
         }
 
-        handleImpPlain ..> handler
-        handleImpPlain o---|> request
-        handleImpPlain o---|> response
+        handler <|.. handleImp
+        handleImp o--> config
+        handleImp ...> request
+        handleImp ...> response
     }
 
     package team.aurorahub.learn.tinyhttp.core{
         class threadPoolManager{
             -maxCon : int
+            -sSocket : ServerSocket
+            -tinyHander : handleImp
+            -fixThreadPool ：ExecutorService
             +threadPoolManager(max : int)
             +setUpHandlers(newConf : config) : void
             +run() : void
         }
-        threadPoolManager *--|> config
-        threadPoolManager *--|> request
-        threadPoolManager *--|> response
+        threadPoolManager ...> config
+        threadPoolManager *--> handleImp
 
         class server{
-            -configure : config
-            +server(newConf : config) : void
+            -manager : threadPoolManager
+            +server(myConf : config) : void
             +main(args : String[]) : void
-            +run() : void
-            +stop() : void
+            -run() : void
         }
-        server o--|> config
+        server *--> threadPoolManager
+        server ...> config
     }
+
+    package team.aurorahub.learn.tinyhttp.tinyUtils{
+        class ioTools{
+            +{static}CRLF : String
+            +{static}BLANK : String
+            +{static}readToString(confPath : String) : String
+            +{static}tinyURLDecoding(url : String, encoding : String) : String
+            +{static}tinyURLEncoding(url : String, encoding : String) : String
+            +{static}tinyStrEncoding(msg String, encoding : String) : byte[]
+            +{static}getContentType(target : File) : String
+            +{static}formatURI(originURI : String) : String
+            +{static}getURLParams(queryStr : String, KVs : HashMap<String, String>) : int
+            +{static}getURIQuery(KVs : HashMap<String, String>) : String
+        }
+    }
+    tinyLocation ...> ioTools
+    config ...> ioTools
+    response ..> ioTools
+    request ...> ioTools
 }
 @enduml

@@ -100,7 +100,9 @@ public class response extends tinyHttpMsg {
             contentLen = 0;
         }
         try {
-            inSocket.transferTo(tinyBody);
+            if (contentLen > 0) {
+                inSocket.transferTo(tinyBody);
+            }
             if (headerFields.get("Connection").equals("close")) {
                 inSocket.close();
             }
@@ -177,15 +179,15 @@ public class response extends tinyHttpMsg {
      *          which means it is necessary to set that field manually.
      */
     public response println(String msg, String encoding) {
-        byte[] msgBytes = tinyStrEncoding(msg + "\n", encoding);
+        byte[] msgBytes = tinyStrEncoding(msg + CRLF, encoding);
         writeBytes(msgBytes, msgBytes.length);
         return this;
     }
 
-    public response loadFile(String path) {
+    public response loadFile(File file) {
         FileInputStream in;
         try {
-            in = new FileInputStream(path);
+            in = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.err.println("File not found");
@@ -213,6 +215,8 @@ public class response extends tinyHttpMsg {
             StringBuilder newHeader = new StringBuilder();
             String firstLine = httpVer + BLANK + statusCode + BLANK + getStatusParse(statusCode) + CRLF;
             newHeader.append(firstLine);
+            // Update Content-length.
+            headerFields.put("Content-Length", "" + contentLen);
             Set<String> keys = headerFields.keySet();
             String oneLine;
             for (String key : keys) {
