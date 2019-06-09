@@ -133,7 +133,7 @@ public class ioTools {
      * @return formated uri {@code String}
      */
     public static String formatURI(String originURI) {
-        return (originURI.replace("\\", "/").toLowerCase());
+        return originURI.replace("\\", "/");
     }
 
     /**
