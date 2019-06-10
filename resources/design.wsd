@@ -99,42 +99,40 @@ package team.aurorahub.learn.tinyhttp{
         tinyHttpMsg <|-- response
     }
     package team.aurorahub.learn.tinyhttp.handler{
-        interface handler{
-            +handle(in : InputStream, out : OutputStream) : void
-        }
-        class handleImp{
+
+        class handler{
             -setting : config
-            +handleImp(myset : config)
+            -client : Socket
+            +handler(myset : config, newSocket : Socket)
             -getLocation(uri : String) : String
+            +run() : void
         }
 
-        handler <|.. handleImp
-        handleImp o--> config
-        handleImp ...> request
-        handleImp ...> response
+        handler o--> config
+        handler ...> request
+        handler ...> response
     }
 
     package team.aurorahub.learn.tinyhttp.core{
         class threadPoolManager{
             -maxCon : int
             -sSocket : ServerSocket
-            -tinyHander : handleImp
             -fixThreadPool ：ExecutorService
             +threadPoolManager(max : int)
-            +setUpHandlers(newConf : config) : void
-            +run() : void
+            +run(myConf : config) : void
         }
         threadPoolManager ...> config
-        threadPoolManager *--> handleImp
+        threadPoolManager ...> handler
 
         class server{
             -manager : threadPoolManager
+            -myConf : config
             +server(myConf : config) : void
-            +main(args : String[]) : void
+            +{static}main(args : String[]) : void
             -run() : void
         }
         server *--> threadPoolManager
-        server ...> config
+        server o--> config
     }
 
     package team.aurorahub.learn.tinyhttp.tinyUtils{

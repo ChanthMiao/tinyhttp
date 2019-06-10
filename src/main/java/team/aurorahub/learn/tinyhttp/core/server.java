@@ -10,22 +10,23 @@ import team.aurorahub.learn.tinyhttp.config.config;
  */
 public class server {
     private threadPoolManager manager;
+    private config myConf;
 
     /**
      * Generate an server instance accroding to specific configure.
      * 
      * @param myConf The config that used to generate server.
      */
-    public server(config myConf) {
-        manager = new threadPoolManager(1024);
-        manager.setUpHandlers(myConf);
+    public server(config newConf) {
+        manager = new threadPoolManager(128);
+        myConf = newConf;
     }
 
     /**
      * Run the server imediately.
      */
     private void run() {
-        manager.run();
+        manager.run(myConf);
     }
 
     /**

@@ -167,7 +167,7 @@ public class ioTools {
      * @return The encoded query {@code Strng}
      */
     public static String getURIQuery(HashMap<String, String> KVs) {
-        StringBuilder origin = new StringBuilder();
+        StringBuffer origin = new StringBuffer();
         Set<String> keys = KVs.keySet();
         for (String key : keys) {
             origin.append(key + "=" + KVs.get(key) + "&");
@@ -187,7 +187,7 @@ public class ioTools {
      *          be ended by {@code CRLF}. Otherwise, this method will by blocked.
      */
     public static String safeHeaderLineReader(InputStreamReader in) {
-        StringBuilder str = new StringBuilder();
+        StringBuffer str = new StringBuffer(256);
         try {
             char[] ch = new char[1];
             in.read(ch, 0, 1);
