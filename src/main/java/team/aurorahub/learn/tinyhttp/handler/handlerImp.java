@@ -36,6 +36,7 @@ public class handlerImp implements handler {
      */
     @Override
     public void handle(InputStream in, OutputStream out) {
+        int success = 0;
         request clientMsg = new request(in);
         clientMsg.readAllBytesNow();
         clientMsg.getHttpVer();
@@ -54,7 +55,7 @@ public class handlerImp implements handler {
             answer.println("</body>", "utf-8");
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
-            answer.sendTo(out);
+            success = answer.sendTo(out);
         }
         String uri = clientMsg.getUri();
         String matchedUri = getRightLocation(uri);
@@ -72,7 +73,7 @@ public class handlerImp implements handler {
             answer.println("</body>", "utf-8");
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
-            answer.sendTo(out);
+            success = answer.sendTo(out);
         }
         tinyLocation locationSetting = setting.getLocation(matchedUri);
         String httpMedtod = clientMsg.getHttpMethod();
@@ -95,7 +96,7 @@ public class handlerImp implements handler {
                     answer.println("</body>", "utf-8");
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
-                    answer.sendTo(out);
+                    success = answer.sendTo(out);
                 } else if (target.isFile()) {
                     response answer = new response(200);
                     answer.loadFile(target);
@@ -107,7 +108,7 @@ public class handlerImp implements handler {
                     } else {
                         answer.setParam("Content-Type", contentType);
                     }
-                    answer.sendTo(out);
+                    success = answer.sendTo(out);
                 } else {
                     response answer = new response(200);
                     String[] fileList = target.list();
@@ -121,13 +122,13 @@ public class handlerImp implements handler {
                     answer.println("<h1>Index of " + uri + "</h1>", "utf-8");
                     answer.println("<hr><pre>", "utf-8");
                     for (String f : fileList) {
-                        answer.println("<a href=\"" + f +"\"/>" + f+"/</a>", "utf-8");
+                        answer.println("<a href=\"" + f + "\"/>" + f + "/</a>", "utf-8");
                     }
                     answer.println("</pre></hr>", "utf-8");
                     answer.println("</body>", "utf-8");
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
-                    answer.sendTo(out);
+                    success = answer.sendTo(out);
                 }
                 break;
             }
@@ -144,7 +145,7 @@ public class handlerImp implements handler {
                 answer.println("</body>", "utf-8");
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
-                answer.sendTo(out);
+                success = answer.sendTo(out);
                 break;
             }
             default: {
@@ -160,7 +161,7 @@ public class handlerImp implements handler {
                 answer.println("</body>", "utf-8");
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
-                answer.sendTo(out);
+                success = answer.sendTo(out);
                 break;
             }
             }
@@ -187,11 +188,11 @@ public class handlerImp implements handler {
                     answer.println("</body>", "utf-8");
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
-                    answer.sendTo(out);
+                    success = answer.sendTo(out);
                     break;
                 }
                 response answer = new response(200);
-                answer.sendTo(out);
+                success = answer.sendTo(out);
                 break;
             }
             case 1: {
@@ -207,7 +208,7 @@ public class handlerImp implements handler {
                 answer.println("</body>", "utf-8");
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
-                answer.sendTo(out);
+                success = answer.sendTo(out);
                 break;
             }
             default: {
@@ -223,7 +224,7 @@ public class handlerImp implements handler {
                 answer.println("</body>", "utf-8");
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
-                answer.sendTo(out);
+                success = answer.sendTo(out);
                 break;
             }
             }
@@ -240,7 +241,14 @@ public class handlerImp implements handler {
             answer.println("</body>", "utf-8");
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
-            answer.sendTo(out);
+            success = answer.sendTo(out);
+        }
+        if (success == -1) {
+            try {
+                out.close();
+            } catch (IOException e) {
+                System.err.println("Error when try to close the stream");
+            }
         }
     }
 
