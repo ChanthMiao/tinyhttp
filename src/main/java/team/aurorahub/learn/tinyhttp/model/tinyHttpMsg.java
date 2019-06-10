@@ -97,7 +97,7 @@ public abstract class tinyHttpMsg {
             out.flush();
             return headerBytes.length + contentLen;
         } catch (IOException e) {
-            e.printStackTrace();
+            // The underlay socket of 'out' may be closed by the client.
             return -1;
         }
     }
