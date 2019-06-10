@@ -1,0 +1,1 @@
+[![Board Status](https://dev.azure.com/AuroraHub/1d16aed9-07bd-4ddb-b6d4-99cbe66924b3/fceb19a6-d6e6-4186-a5f8-9041014fcb34/_apis/work/boardbadge/20be362e-c41b-442e-8233-7bf3bb5d5703)](https://dev.azure.com/AuroraHub/1d16aed9-07bd-4ddb-b6d4-99cbe66924b3/_boards/board/t/fceb19a6-d6e6-4186-a5f8-9041014fcb34/Microsoft.RequirementCategory)
