@@ -71,7 +71,7 @@ public class request extends tinyHttpMsg {
             tinyUri = tinyUri + "/";
         }
         if (tinyUri.indexOf('?') != -1) {
-            fields = tinyUri.split("?");
+            fields = tinyUri.split("\\?");
             tinyUri = fields[0];
             tinyQuery = fields[1];
             queryNums = getURLParams(fields[1], queryParams);
@@ -91,10 +91,6 @@ public class request extends tinyHttpMsg {
         try {
             if (contentLen > 0) {
                 inSocket.transferTo(tinyBody);
-            }
-            // inSocket.transferTo(tinyBody);
-            if (headerFields.get("Connection").trim().equals("close")) {
-                inSocket.close();
             }
         } catch (IOException e) {
             contentLen = -1;
