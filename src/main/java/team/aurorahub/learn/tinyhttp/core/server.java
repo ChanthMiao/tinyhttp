@@ -25,7 +25,7 @@ public class server {
     /**
      * Run the server imediately.
      */
-    private void run() {
+    public void run() {
         manager.run(myConf);
     }
 
@@ -38,8 +38,14 @@ public class server {
         if (args.length != 2) {
             throw new RuntimeException("YOU NEED TO PROVIDE CONFIGURE FILE BY ARGS.");
         } else if (args[0].equals("-c")) {
+            System.out.println("Loading custemd configure...");
             config myConf = new config(args[1]);
+            System.out.println("Done!");
+            System.out.println("Create server instance with thread-Pool...");
             server newServer = new server(myConf);
+            System.out.println("Done!");
+            int port = myConf.getPort();
+            System.out.println("Listening on port " + port);
             newServer.run();
         } else {
             throw new RuntimeException("INVALID OPTION DETECT.");

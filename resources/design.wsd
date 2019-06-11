@@ -2,7 +2,9 @@
 package team.aurorahub.learn.tinyhttp{
 
     package team.aurorahub.learn.tinyhttp.config{
-        interface validLC {
+        class tinyLocation {
+            -settings : JSONObject
+            +tinyLocation()
             +load(refMap : JSONObject) : void
             +check() : boolean
             +getPath() : String
@@ -14,13 +16,6 @@ package team.aurorahub.learn.tinyhttp{
             +getHandlerPath() : String
             +setHandlerPath(handlerPath : String) : void
         }
-
-        class tinyLocation {
-            -settings : JSONObject
-            +tinyLocation()
-        }
-
-        tinyLocation ..|> validLC
 
         class config{
             -configFilePath : String
@@ -49,7 +44,7 @@ package team.aurorahub.learn.tinyhttp{
             +setRedirect(newRedirct : boolean) : void
         }
 
-        config *--> tinyLocation
+        config *-left-> tinyLocation
     }
 
     package team.aurorahub.learn.tinyhttp.model{
@@ -81,7 +76,7 @@ package team.aurorahub.learn.tinyhttp{
             +getHttpVer() : String
         }
 
-        tinyHttpMsg <|-- request
+        tinyHttpMsg <|-left- request
 
         class response{
             #httpVer : String
@@ -108,8 +103,8 @@ package team.aurorahub.learn.tinyhttp{
             +run() : void
         }
 
-        handler o--> config
-        handler ...> request
+        handler o-left-> config
+        handler .right.> request
         handler ...> response
     }
 
@@ -128,10 +123,10 @@ package team.aurorahub.learn.tinyhttp{
             -manager : threadPoolManager
             -myConf : config
             +server(myConf : config) : void
+            +run() : void
             +{static}main(args : String[]) : void
-            -run() : void
         }
-        server *--> threadPoolManager
+        server *-right-> threadPoolManager
         server o--> config
     }
 
@@ -148,10 +143,29 @@ package team.aurorahub.learn.tinyhttp{
             +{static}getURLParams(queryStr : String, KVs : HashMap<String, String>) : int
             +{static}getURIQuery(KVs : HashMap<String, String>) : String
         }
+
+        class tinyLogger{
+            -{static}logFile : String
+            -{static}myLogger : Logger
+            -{static}formatter : DateTimeFormatter
+            -tinyLogger()
+            +{static}setLogPath(path : String) : void
+            +{static}getTinyLogger() : Logger
+        }
+
+        handler .down.> tinyLogger
+        server .down.> tinyLogger
+        threadPoolManager ...>tinyLogger
+
+        class tinyLogFormat{
+            -format(record : LogRecord) : String
+        }
+
+        tinyLogger+--tinyLogFormat
     }
-    tinyLocation ...> ioTools
-    config ...> ioTools
-    response ..> ioTools
-    request ...> ioTools
+    tinyLocation .down.> ioTools
+    config .down.> ioTools
+    response .up.> ioTools
+    request .up.> ioTools
 }
 @enduml

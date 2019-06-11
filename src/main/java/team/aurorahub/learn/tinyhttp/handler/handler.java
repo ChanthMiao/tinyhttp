@@ -7,11 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import team.aurorahub.learn.tinyhttp.config.config;
 import team.aurorahub.learn.tinyhttp.config.tinyLocation;
 import team.aurorahub.learn.tinyhttp.model.request;
 import team.aurorahub.learn.tinyhttp.model.response;
+import team.aurorahub.learn.tinyhttp.tinyUtils.tinyLogger;
 
 import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
 
@@ -63,12 +65,28 @@ public class handler implements Runnable {
      * @apiNote This method is uncompleted.
      */
     private void handle(InputStream in, OutputStream out) {
+        Logger myLogger = tinyLogger.getTinyLogger();
+        String remote = client.getRemoteSocketAddress().toString();
         int success = 0;
         request clientMsg = new request(in);
-        clientMsg.readAllBytesNow();
-        clientMsg.getHttpVer();
-        // We do not support other http version.
+        int contentLen = clientMsg.readAllBytesNow();
+        if (contentLen == -1) {
+            // Invalid inputstream, close the stream.
+            try {
+                client.shutdownInput();
+                client.shutdownOutput();
+            } catch (IOException e) {
+                System.err.println("Error when try to close the stream");
+            }
+            return;
+        }
+        String uri = clientMsg.getUri();
+        String matchedUri = getRightLocation(uri);
+        tinyLocation locationSetting = setting.getLocation(matchedUri);
+        String httpMedtod = clientMsg.getHttpMethod();
+        String root = setting.getRoot();
         if (clientMsg.getHttpVer().equals("HTTP/1.1") == false) {
+            // We do not support other http version.
             response answer = new response(505);
             answer.println("<html>", "utf-8");
             answer.println("<head>", "utf-8");
@@ -83,10 +101,8 @@ public class handler implements Runnable {
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
             success = answer.sendTo(out);
-        }
-        String uri = clientMsg.getUri();
-        String matchedUri = getRightLocation(uri);
-        if (matchedUri == null || setting.getLocation(matchedUri).isAccessiable() == false) {
+            myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 505);
+        } else if (matchedUri == null || setting.getLocation(matchedUri).isAccessiable() == false) {
             response answer = new response(403);
             answer.println("<html>", "utf-8");
             answer.println("<head>", "utf-8");
@@ -101,11 +117,8 @@ public class handler implements Runnable {
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
             success = answer.sendTo(out);
-        }
-        tinyLocation locationSetting = setting.getLocation(matchedUri);
-        String httpMedtod = clientMsg.getHttpMethod();
-        String root = setting.getRoot();
-        if (httpMedtod.equals("GET")) {
+            myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 403);
+        } else if (httpMedtod.equals("GET")) {
             switch (locationSetting.getHandlerType()) {
             case 0: {
                 File target = getFileByUri(uri, root);
@@ -124,6 +137,7 @@ public class handler implements Runnable {
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
                     success = answer.sendTo(out);
+                    myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 404);
                 } else if (target.isFile()) {
                     response answer = new response(200);
                     answer.loadFile(target);
@@ -136,6 +150,7 @@ public class handler implements Runnable {
                         answer.setParam("Content-Type", contentType);
                     }
                     success = answer.sendTo(out);
+                    myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 200);
                 } else {
                     response answer = new response(200);
                     File[] fileList = target.listFiles();
@@ -163,6 +178,7 @@ public class handler implements Runnable {
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
                     success = answer.sendTo(out);
+                    myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 200);
                 }
                 break;
             }
@@ -180,6 +196,7 @@ public class handler implements Runnable {
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
                 success = answer.sendTo(out);
+                myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 501);
                 break;
             }
             default: {
@@ -196,6 +213,7 @@ public class handler implements Runnable {
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
                 success = answer.sendTo(out);
+                myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 501);
                 break;
             }
             }
@@ -223,10 +241,12 @@ public class handler implements Runnable {
                     answer.println("</html>", "utf-8");
                     answer.setParam("Content-Type", "text/html; charset=utf-8");
                     success = answer.sendTo(out);
+                    myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 500);
                     break;
                 }
                 response answer = new response(200);
                 success = answer.sendTo(out);
+                myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 200);
                 break;
             }
             case 1: {
@@ -243,6 +263,7 @@ public class handler implements Runnable {
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
                 success = answer.sendTo(out);
+                myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 501);
                 break;
             }
             default: {
@@ -259,6 +280,7 @@ public class handler implements Runnable {
                 answer.println("</html>", "utf-8");
                 answer.setParam("Content-Type", "text/html; charset=utf-8");
                 success = answer.sendTo(out);
+                myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 501);
                 break;
             }
             }
@@ -276,22 +298,22 @@ public class handler implements Runnable {
             answer.println("</html>", "utf-8");
             answer.setParam("Content-Type", "text/html; charset=utf-8");
             success = answer.sendTo(out);
+            myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 405);
         }
         String ConnectionFlag = clientMsg.getParam("Connection");
         if (success == -1 || ConnectionFlag != null && ConnectionFlag.trim().equals("close")) {
             try {
-                // in.close();
-                // out.close();
                 client.shutdownInput();
                 client.shutdownOutput();
             } catch (IOException e) {
-                System.err.println("Error when try to close the stream");
+                myLogger.warning(remote + "error when closing the stream.");
             }
         }
     }
 
     @Override
     public void run() {
+        Logger myLogger = tinyLogger.getTinyLogger();
         try {
             InputStream in = client.getInputStream();
             OutputStream out = client.getOutputStream();
@@ -300,9 +322,11 @@ public class handler implements Runnable {
             }
             if (client.isClosed() == false) {
                 client.close();
+                myLogger.info(client.getRemoteSocketAddress().toString() + " socket closed.");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            myLogger.warning(client.getRemoteSocketAddress().toString() + " errer when closing the socket.");
         }
     }
 }

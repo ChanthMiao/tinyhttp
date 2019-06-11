@@ -10,7 +10,7 @@ import com.alibaba.fastjson.*;
  * @version 1.0
  * 
  */
-public class tinyLocation implements validLC {
+public class tinyLocation {
     private JSONObject settings;
 
     /**
@@ -24,7 +24,6 @@ public class tinyLocation implements validLC {
      * @param refJSONObj The outer data to be loaded in the type of
      *                   {@code JSONObject}
      */
-    @Override
     public void load(JSONObject refJSONObj) {
         settings = refJSONObj;
     }
@@ -34,7 +33,6 @@ public class tinyLocation implements validLC {
      * 
      * @return {@code true}, if the instance is valid.
      */
-    @Override
     public boolean check() {
         if (settings.containsKey("type") == false) {
             return false;
@@ -50,7 +48,6 @@ public class tinyLocation implements validLC {
      * 
      * @return {@code true}, if this loaction is accessiable.
      */
-    @Override
     public Boolean isAccessiable() {
         if (settings.containsKey("accessiable")) {
             return settings.getBooleanValue("accessiable");
@@ -64,7 +61,6 @@ public class tinyLocation implements validLC {
      * @return {@code 0} for local static files, {@code 1} for dynamic contents.
      *         Others are unknown.
      */
-    @Override
     public int getHandlerType() {
         if (settings.containsKey("type")) {
             return settings.getIntValue("type");
@@ -77,7 +73,6 @@ public class tinyLocation implements validLC {
      * 
      * @return A {@code String} that descrpts the handler path.
      */
-    @Override
     public String getHandlerPath() {
         if (settings.containsKey("handler")) {
             return settings.getString("handler");
@@ -91,7 +86,6 @@ public class tinyLocation implements validLC {
      * @param type {@code 0} for local static files, {@code 1} for dynamic contents.
      *             Others are unknown.
      */
-    @Override
     public void setHandlerType(int type) {
         settings.put("type", type);
     }
@@ -101,7 +95,6 @@ public class tinyLocation implements validLC {
      * 
      * @param handlerPath A {@code String} that descrpts the handler path.
      */
-    @Override
     public void setHandlerPath(String handlerPath) {
         settings.put("handler", handlerPath);
     }
@@ -111,26 +104,7 @@ public class tinyLocation implements validLC {
      * 
      * @param accessiable {@code true}, for accessiable.
      */
-    @Override
     public void setAccessible(boolean accessiable) {
         settings.put("accessiable", accessiable);
     }
-}
-
-interface validLC {
-    public void load(JSONObject refJSONObj);
-
-    public boolean check();
-
-    public Boolean isAccessiable();
-
-    public void setAccessible(boolean accessiable);
-
-    public int getHandlerType();
-
-    public void setHandlerType(int type);
-
-    public String getHandlerPath();
-
-    public void setHandlerPath(String handlerPath);
 }

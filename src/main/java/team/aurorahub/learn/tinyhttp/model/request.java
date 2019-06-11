@@ -57,14 +57,35 @@ public class request extends tinyHttpMsg {
         }
         String tmp = null;
         String[] fields = null;
-        tmp = safeHeaderLineReader(tinySocketReader);
+        try {
+            tmp = safeHeaderLineReader(tinySocketReader);
+        } catch (OutOfMemoryError e) {
+            contentLen = -1;
+            return contentLen;
+        }
+        if (tmp == null) {
+            System.err.println("Not a http request, ignore it.");
+            contentLen = -1;
+            return contentLen;
+        }
         fields = tmp.split(BLANK);
         if (fields.length == 3) {
             tinyMethod = fields[0];
             tinyUri = fields[1];
             httpVer = fields[2];
         } else {
-            throw new RuntimeException("Not a http request!");
+            System.err.println("Not a http request, ignore it.");
+            contentLen = -1;
+            try {
+                if (contentLen > 0) {
+                    inSocket.transferTo(tinyBody);
+                }
+            } catch (IOException e) {
+                contentLen = -1;
+                System.err.println("Error when try to ignore the rest ditry data.");
+                e.printStackTrace();
+            }
+            return contentLen;
         }
         // Format it.
         if (tinyUri.endsWith("/") == false) {
@@ -94,6 +115,7 @@ public class request extends tinyHttpMsg {
             }
         } catch (IOException e) {
             contentLen = -1;
+            System.err.println("Error when try to save the http body content.");
             e.printStackTrace();
         }
         return contentLen;
