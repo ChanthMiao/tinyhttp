@@ -5,9 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 import team.aurorahub.learn.tinyhttp.config.config;
 import team.aurorahub.learn.tinyhttp.handler.*;
+import team.aurorahub.learn.tinyhttp.tinyUtils.tinyLogger;
 
 /**
  * This class manages a fix thread-Pool, and invokes the
@@ -38,10 +40,12 @@ public class threadPoolManager {
      * Run with specific configure.
      */
     public void run(config myConf) {
+        Logger myLogger = tinyLogger.getTinyLogger();
         try {
             sSocket = new ServerSocket(myConf.getPort());
             while (true) {
                 Socket newSocket = sSocket.accept();
+                myLogger.info(newSocket.getRemoteSocketAddress().toString() + " new cennection established.");
                 fixThreadPool.execute(new handler(myConf, newSocket));
             }
         } catch (IOException e) {
