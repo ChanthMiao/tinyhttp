@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.DeflaterInputStream;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
-public abstract class tinyHttpMsg {
+public abstract class TinyHttpMsg {
     protected int contentLen;
     protected HashMap<String, String> headerFields;
     protected ByteArrayOutputStream tinyBody;
@@ -23,7 +23,7 @@ public abstract class tinyHttpMsg {
      * 
      * @param newInput The specific {@code InputStream}.
      */
-    public tinyHttpMsg(InputStream newInput) {
+    public TinyHttpMsg(InputStream newInput) {
         inSocket = newInput;
         tinyBody = new ByteArrayOutputStream(1024);
         contentLen = -1;

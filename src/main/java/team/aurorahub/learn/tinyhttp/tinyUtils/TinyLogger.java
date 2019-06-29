@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * This class define the specific logger of tinyhttp.
  */
-public class tinyLogger {
+public class TinyLogger {
     private static String logFile = null;
     private static Logger myLogger = null;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -23,11 +23,11 @@ public class tinyLogger {
     /**
      * Initialize the shared logger for tinyhttp.
      */
-    private tinyLogger() {
+    private TinyLogger() {
         myLogger = Logger.getLogger("tinyhttp");
         myLogger.setUseParentHandlers(false);
         myLogger.addHandler(new ConsoleHandler());
-        Formatter tinyFormatter = new tinyLogFormat();
+        Formatter tinyFormatter = new TinyLogFormat();
         if (logFile != null) {
             try {
                 FileHandler tinyFileOut = new FileHandler(logFile);
@@ -57,12 +57,12 @@ public class tinyLogger {
      */
     public static Logger getTinyLogger() {
         if (myLogger == null) {
-            new tinyLogger();
+            new TinyLogger();
         }
         return myLogger;
     }
 
-    private class tinyLogFormat extends Formatter {
+    private class TinyLogFormat extends Formatter {
 
         @Override
         public String format(LogRecord record) {

@@ -3,16 +3,16 @@ package team.aurorahub.learn.tinyhttp.model;
 import java.io.*;
 import java.util.*;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
 /**
  * This class is able to descript a http request.
  * 
  * @author Chanth Miao
  * @version 1.0
- * @see team.aurorahub.learn.tinyhttp.model.tinyHttpMsg
+ * @see team.aurorahub.learn.tinyhttp.model.TinyHttpMsg
  */
-public class request extends tinyHttpMsg {
+public class Request extends TinyHttpMsg {
     protected String tinyUri;
     protected String tinyMethod;
     protected String httpVer;
@@ -26,7 +26,7 @@ public class request extends tinyHttpMsg {
      * 
      * @param newInput The specific {@code InputStream}.
      */
-    public request(InputStream newInput) {
+    public Request(InputStream newInput) {
         super(newInput);
         queryParams = new HashMap<String, String>();
         tinyUri = null;

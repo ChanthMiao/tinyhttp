@@ -10,13 +10,13 @@ import com.alibaba.fastjson.*;
  * @version 1.0
  * 
  */
-public class tinyLocation {
+public class TinyLocation {
     private JSONObject settings;
 
     /**
      * Constuct an instance of tinyLocation to carry a 'location setting'.
      */
-    public tinyLocation() {
+    public TinyLocation() {
         settings = new JSONObject();
     }
 

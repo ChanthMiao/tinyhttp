@@ -10,14 +10,14 @@ import org.junit.Test;
  * @author Chanth Miao
  * @version 1.0
  */
-public class testLocation {
+public class TestLocation {
     private static final String baseStr = "{\"type\":0,\"handler\":\"plain\",\"accessiable\": true}";
 
-    private tinyLocation testedObj;
+    private TinyLocation testedObj;
 
-    public testLocation() {
+    public TestLocation() {
         JSONObject sample = JSONObject.parseObject(baseStr);
-        testedObj = new tinyLocation();
+        testedObj = new TinyLocation();
         testedObj.load(sample);
     }
 

@@ -1,6 +1,6 @@
 package team.aurorahub.learn.tinyhttp.config;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.formatURI;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.formatURI;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,13 +12,13 @@ import org.junit.Test;
  * @author Chanth Miao
  * @version 1.0
  */
-public class testConfig {
+public class TestConfig {
     private static final String testConfPath = "resources\\test\\test.json";
 
-    private config sampleConfig;
+    private Config sampleConfig;
 
-    public testConfig() {
-        sampleConfig = new config(testConfPath);
+    public TestConfig() {
+        sampleConfig = new Config(testConfPath);
     }
 
     @Test
