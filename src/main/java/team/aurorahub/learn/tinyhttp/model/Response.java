@@ -9,16 +9,16 @@ import java.util.Set;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
 /**
  * This class is able to descripts a http response.
  * 
  * @author Chanth Miao
  * @version 1.0
- * @see team.aurorahub.learn.tinyhttp.model.tinyHttpMsg
+ * @see team.aurorahub.learn.tinyhttp.model.TinyHttpMsg
  */
-public class response extends tinyHttpMsg {
+public class Response extends TinyHttpMsg {
 
     protected String httpVer;
     protected int statusCode;
@@ -26,11 +26,11 @@ public class response extends tinyHttpMsg {
     protected boolean fromOuter;
 
     /**
-     * Construct a {@code response} instance from outer {@code InputStream}.
+     * Construct a {@code Response} instance from outer {@code InputStream}.
      * 
      * @param newInput The outer data stream.
      */
-    public response(InputStream newInput) {
+    public Response(InputStream newInput) {
         super(newInput);
         statusCode = -1;
         httpVer = null;
@@ -39,11 +39,11 @@ public class response extends tinyHttpMsg {
     }
 
     /**
-     * Construct a {@code response} instance with uncompleted content.
+     * Construct a {@code Response} instance with uncompleted content.
      * 
      * @param code The http status code.
      */
-    public response(int code) {
+    public Response(int code) {
         super(null);
         contentLen = 0;
         statusCode = code;
@@ -158,11 +158,11 @@ public class response extends tinyHttpMsg {
      * 
      * @param msg      The {@code String} to append.
      * @param encoding The specific charset.
-     * @return The referenc to response instance it self.
+     * @return The referenc to {@code Response} instance it self.
      * @apiNote This method is does not care about the header field 'Content-Type',
      *          which means it is necessary to set that field manually.
      */
-    public response print(String msg, String encoding) {
+    public Response print(String msg, String encoding) {
         byte[] msgBytes = tinyStrEncoding(msg, encoding);
         writeBytes(msgBytes, msgBytes.length);
         return this;
@@ -174,17 +174,17 @@ public class response extends tinyHttpMsg {
      * 
      * @param msg      The {@code String} to append.
      * @param encoding The specific charset.
-     * @return The referenc to response instance it self.
+     * @return The referenc to {@code Response} instance it self.
      * @apiNote This method is does not care about the header field 'Content-Type',
      *          which means it is necessary to set that field manually.
      */
-    public response println(String msg, String encoding) {
+    public Response println(String msg, String encoding) {
         byte[] msgBytes = tinyStrEncoding(msg + CRLF, encoding);
         writeBytes(msgBytes, msgBytes.length);
         return this;
     }
 
-    public response loadFile(File file) {
+    public Response loadFile(File file) {
         FileInputStream in;
         try {
             in = new FileInputStream(file);

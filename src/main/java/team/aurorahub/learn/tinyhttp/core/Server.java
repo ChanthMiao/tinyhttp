@@ -1,6 +1,6 @@
 package team.aurorahub.learn.tinyhttp.core;
 
-import team.aurorahub.learn.tinyhttp.config.config;
+import team.aurorahub.learn.tinyhttp.config.Config;
 
 /**
  * This class can be used as a demo of tinyhttp.
@@ -8,22 +8,22 @@ import team.aurorahub.learn.tinyhttp.config.config;
  * @author Chanth Miao
  * @version 1.0
  */
-public class server {
-    private threadPoolManager manager;
-    private config myConf;
+public class Server {
+    private ThreadPoolManager manager;
+    private Config myConf;
 
     /**
-     * Generate an server instance accroding to specific configure.
+     * Generate an {@code Server} instance accroding to specific configure.
      * 
-     * @param myConf The config that used to generate server.
+     * @param myConf The {@code Config} that used to generate {@code Server}.
      */
-    public server(config newConf) {
-        manager = new threadPoolManager(128);
+    public Server(Config newConf) {
+        manager = new ThreadPoolManager(128);
         myConf = newConf;
     }
 
     /**
-     * Run the server imediately.
+     * Run the {@code Server} imediately.
      */
     public void run() {
         manager.run(myConf);
@@ -39,10 +39,10 @@ public class server {
             throw new RuntimeException("YOU NEED TO PROVIDE CONFIGURE FILE BY ARGS.");
         } else if (args[0].equals("-c")) {
             System.out.println("Loading custemd configure...");
-            config myConf = new config(args[1]);
+            Config myConf = new Config(args[1]);
             System.out.println("Done!");
             System.out.println("Create server instance with thread-Pool...");
-            server newServer = new server(myConf);
+            Server newServer = new Server(myConf);
             System.out.println("Done!");
             int port = myConf.getPort();
             System.out.println("Listening on port " + port);

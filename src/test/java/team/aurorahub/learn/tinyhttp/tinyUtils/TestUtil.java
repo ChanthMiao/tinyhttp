@@ -1,7 +1,7 @@
 package team.aurorahub.learn.tinyhttp.tinyUtils;
 
 import static org.junit.Assert.assertEquals;
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +16,7 @@ import org.junit.Test;
  * @author Chanth Miao
  * @version 1.0
  */
-public class testUtil {
+public class TestUtil {
     @Test
     public void testReadToString() {
         String testTextPath = "resources/test/testText.txt";

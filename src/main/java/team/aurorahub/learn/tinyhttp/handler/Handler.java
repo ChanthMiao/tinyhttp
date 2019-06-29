@@ -9,13 +9,13 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import team.aurorahub.learn.tinyhttp.config.config;
-import team.aurorahub.learn.tinyhttp.config.tinyLocation;
-import team.aurorahub.learn.tinyhttp.model.request;
-import team.aurorahub.learn.tinyhttp.model.response;
-import team.aurorahub.learn.tinyhttp.tinyUtils.tinyLogger;
+import team.aurorahub.learn.tinyhttp.config.Config;
+import team.aurorahub.learn.tinyhttp.config.TinyLocation;
+import team.aurorahub.learn.tinyhttp.model.Request;
+import team.aurorahub.learn.tinyhttp.model.Response;
+import team.aurorahub.learn.tinyhttp.tinyUtils.TinyLogger;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
 /**
  * This class responsible for the event handle.
@@ -23,17 +23,17 @@ import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
  * @author Chanth Miao
  * @version 1.0
  */
-public class handler implements Runnable {
-    private config setting;
+public class Handler implements Runnable {
+    private Config setting;
     private Socket client;
 
     /**
      * Generate a Runable instance.
      * 
-     * @param myset     The config isntance.
+     * @param myset     The {@code Config} isntance.
      * @param newClient The new client socket.
      */
-    public handler(config myset, Socket newClient) {
+    public Handler(Config myset, Socket newClient) {
         setting = myset;
         client = newClient;
     }
@@ -65,10 +65,10 @@ public class handler implements Runnable {
      * @apiNote This method is uncompleted.
      */
     private void handle(InputStream in, OutputStream out) {
-        Logger myLogger = tinyLogger.getTinyLogger();
+        Logger myLogger = TinyLogger.getTinyLogger();
         String remote = client.getRemoteSocketAddress().toString();
         int success = 0;
-        request clientMsg = new request(in);
+        Request clientMsg = new Request(in);
         int contentLen = clientMsg.readAllBytesNow();
         if (contentLen == -1) {
             // Invalid inputstream, close the stream.
@@ -82,12 +82,12 @@ public class handler implements Runnable {
         }
         String uri = clientMsg.getUri();
         String matchedUri = getRightLocation(uri);
-        tinyLocation locationSetting = setting.getLocation(matchedUri);
+        TinyLocation locationSetting = setting.getLocation(matchedUri);
         String httpMedtod = clientMsg.getHttpMethod();
         String root = setting.getRoot();
         if (clientMsg.getHttpVer().equals("HTTP/1.1") == false) {
             // We do not support other http version.
-            response answer = new response(505);
+            Response answer = new Response(505);
             answer.println("<html>", "utf-8");
             answer.println("<head>", "utf-8");
             answer.println("<title>505 unsupported http version</title>", "utf-8");
@@ -103,7 +103,7 @@ public class handler implements Runnable {
             success = answer.sendTo(out);
             myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 505);
         } else if (matchedUri == null || setting.getLocation(matchedUri).isAccessiable() == false) {
-            response answer = new response(403);
+            Response answer = new Response(403);
             answer.println("<html>", "utf-8");
             answer.println("<head>", "utf-8");
             answer.println("<title>403 Forbidden</title>", "utf-8");
@@ -123,7 +123,7 @@ public class handler implements Runnable {
             case 0: {
                 File target = getFileByUri(uri, root);
                 if (target == null) {
-                    response answer = new response(404);
+                    Response answer = new Response(404);
                     answer.println("<html>", "utf-8");
                     answer.println("<head>", "utf-8");
                     answer.println("<title>404 Not Found</title>", "utf-8");
@@ -139,7 +139,7 @@ public class handler implements Runnable {
                     success = answer.sendTo(out);
                     myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 404);
                 } else if (target.isFile()) {
-                    response answer = new response(200);
+                    Response answer = new Response(200);
                     answer.loadFile(target);
                     String contentType = getContentType(target);
                     if (contentType.startsWith("text/")) {
@@ -152,7 +152,7 @@ public class handler implements Runnable {
                     success = answer.sendTo(out);
                     myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 200);
                 } else {
-                    response answer = new response(200);
+                    Response answer = new Response(200);
                     File[] fileList = target.listFiles();
                     answer.println("<html>", "utf-8");
                     answer.println("<head>", "utf-8");
@@ -183,7 +183,7 @@ public class handler implements Runnable {
                 break;
             }
             case 1: {
-                response answer = new response(501);
+                Response answer = new Response(501);
                 answer.println("<html>", "utf-8");
                 answer.println("<head>", "utf-8");
                 answer.println("<title>501 Not Implemented</title>", "utf-8");
@@ -200,7 +200,7 @@ public class handler implements Runnable {
                 break;
             }
             default: {
-                response answer = new response(501);
+                Response answer = new Response(501);
                 answer.println("<html>", "utf-8");
                 answer.println("<head>", "utf-8");
                 answer.println("<title>501 Not Implemented</title>", "utf-8");
@@ -227,7 +227,7 @@ public class handler implements Runnable {
                     file.flush();
                     file.close();
                 } catch (IOException e) {
-                    response answer = new response(500);
+                    Response answer = new Response(500);
                     answer.println("<html>", "utf-8");
                     answer.println("<head>", "utf-8");
                     answer.println("<title>500 Internal Server Error</title>", "utf-8");
@@ -244,13 +244,13 @@ public class handler implements Runnable {
                     myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 500);
                     break;
                 }
-                response answer = new response(200);
+                Response answer = new Response(200);
                 success = answer.sendTo(out);
                 myLogger.info(remote + " " + uri + " " + httpMedtod + " " + 200);
                 break;
             }
             case 1: {
-                response answer = new response(501);
+                Response answer = new Response(501);
                 answer.println("<html>", "utf-8");
                 answer.println("<head>", "utf-8");
                 answer.println("<title>501 Not Implemented</title>", "utf-8");
@@ -267,7 +267,7 @@ public class handler implements Runnable {
                 break;
             }
             default: {
-                response answer = new response(501);
+                Response answer = new Response(501);
                 answer.println("<html>", "utf-8");
                 answer.println("<head>", "utf-8");
                 answer.println("<title>501 Not Implemented</title>", "utf-8");
@@ -285,7 +285,7 @@ public class handler implements Runnable {
             }
             }
         } else {
-            response answer = new response(405);
+            Response answer = new Response(405);
             answer.println("<html>", "utf-8");
             answer.println("<head>", "utf-8");
             answer.println("<title>405 Method Not Allowed</title>", "utf-8");
@@ -313,7 +313,7 @@ public class handler implements Runnable {
 
     @Override
     public void run() {
-        Logger myLogger = tinyLogger.getTinyLogger();
+        Logger myLogger = TinyLogger.getTinyLogger();
         try {
             InputStream in = client.getInputStream();
             OutputStream out = client.getOutputStream();

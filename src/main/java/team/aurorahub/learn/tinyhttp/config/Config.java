@@ -1,6 +1,6 @@
 package team.aurorahub.learn.tinyhttp.config;
 
-import static team.aurorahub.learn.tinyhttp.tinyUtils.ioTools.*;
+import static team.aurorahub.learn.tinyhttp.tinyUtils.IoTools.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,9 +13,9 @@ import com.alibaba.fastjson.*;
  * 
  * @author Chanth Miao
  * @version 1.0
- * @see team.aurorahub.learn.tinyhttp.config.tinyLocation
+ * @see team.aurorahub.learn.tinyhttp.config.TinyLocation
  */
-public class config {
+public class Config {
     private String configFilePath;
     private boolean customed;
     private String domain;
@@ -25,12 +25,12 @@ public class config {
     private String redirectHost;
     private int redirectPort;
     private LinkedList<String> paths;
-    private HashMap<String, tinyLocation> locations;
+    private HashMap<String, TinyLocation> locations;
 
     /**
-     * Construct an instance of config with a default content.
+     * Construct an instance of {@code Config} with a default content.
      */
-    public config() {
+    public Config() {
         configFilePath = null;
         String webDir = System.getProperty("user.home");
         port = 80;
@@ -40,21 +40,21 @@ public class config {
         redirectPort = -1;
         paths = new LinkedList<String>();
         paths.add("/");
-        tinyLocation DefaultPath = new tinyLocation();
+        TinyLocation DefaultPath = new TinyLocation();
         DefaultPath.setAccessible(true);
         DefaultPath.setHandlerType(0);
         DefaultPath.setHandlerPath("plain");
         customed = false;
-        locations = new HashMap<String, tinyLocation>();
+        locations = new HashMap<String, TinyLocation>();
         locations.put(paths.get(0), DefaultPath);
     }
 
     /**
-     * Construct an instance of config with given config file path.
+     * Construct an instance of {@code Config} with given config file path.
      * 
      * @param confPath The path of customed config file.
      */
-    public config(String confPath) {
+    public Config(String confPath) {
         this();
         configFilePath = formatURI(confPath);
         String confStr;
@@ -101,7 +101,7 @@ public class config {
                 String[] pathsArray = pathArrayJ.toArray(new String[0]);
                 for (String path : pathsArray) {
                     if (customed && confObject.containsKey(path)) {
-                        tinyLocation curr = new tinyLocation();
+                        TinyLocation curr = new TinyLocation();
                         curr.load(confObject.getJSONObject(path));
                         if (curr.check()) {
                             // Update the location settings.
@@ -132,12 +132,12 @@ public class config {
             redirect = false;
             paths = new LinkedList<String>();
             paths.add("/");
-            tinyLocation DefaultPath = new tinyLocation();
+            TinyLocation DefaultPath = new TinyLocation();
             DefaultPath.setAccessible(true);
             DefaultPath.setHandlerType(0);
             DefaultPath.setHandlerPath("plain");
             customed = false;
-            locations = new HashMap<String, tinyLocation>();
+            locations = new HashMap<String, TinyLocation>();
             locations.put(paths.get(0), DefaultPath);
         }
     }
@@ -197,29 +197,29 @@ public class config {
     }
 
     /**
-     * Get specific {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
-     * tinyLocation} acroding to given path.
+     * Get specific {@link team.aurorahub.learn.tinyhttp.config.TinyLocation
+     * TinyLocation} acroding to given path.
      * 
      * @param path A str that can be used asthe label of tinyLoaction.
-     * @return A {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
-     *         tinyLocation} instance.
+     * @return A {@link team.aurorahub.learn.tinyhttp.config.TinyLocation
+     *         TinyLocation} instance.
      */
-    public tinyLocation getLocation(String path) {
+    public TinyLocation getLocation(String path) {
         return locations.get(path);
     }
 
     /**
-     * Add {@link team.aurorahub.learn.tinyhttp.config.tinyLocation tinyLocation}
-     * into current config. The paths list will also be updated.
+     * Add {@link team.aurorahub.learn.tinyhttp.config.TinyLocation TinyLocation}
+     * into current {@code Config} instance. The paths list will also be updated.
      * 
      * @param newLocation The instance of
-     *                    {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
-     *                    tinyLocation}
+     *                    {@link team.aurorahub.learn.tinyhttp.config.TinyLocation
+     *                    TinyLocation}
      * @param newPath     The label for new
-     *                    {@link team.aurorahub.learn.tinyhttp.config.tinyLocation
-     *                    tinyLocation}, in {@code String}.
+     *                    {@link team.aurorahub.learn.tinyhttp.config.TinyLocation
+     *                    TinyLocation}, in {@code String}.
      */
-    public void addLocation(tinyLocation newLocation, String newPath) {
+    public void addLocation(TinyLocation newLocation, String newPath) {
         if (newLocation.check() == false) {
             return;
         }

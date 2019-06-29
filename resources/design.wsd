@@ -1,10 +1,10 @@
 @startuml tinyhttp
 package team.aurorahub.learn.tinyhttp{
 
-    package team.aurorahub.learn.tinyhttp.config{
-        class tinyLocation {
+    package team.aurorahub.learn.tinyhttp.Config{
+        class TinyLocation {
             -settings : JSONObject
-            +tinyLocation()
+            +TinyLocation()
             +load(refMap : JSONObject) : void
             +check() : boolean
             +getPath() : String
@@ -17,7 +17,7 @@ package team.aurorahub.learn.tinyhttp{
             +setHandlerPath(handlerPath : String) : void
         }
 
-        class config{
+        class Config{
             -configFilePath : String
             -customed : boolean
             -domain : String
@@ -27,33 +27,33 @@ package team.aurorahub.learn.tinyhttp{
             -redirectHost : String
             -redirectPort : String
             -paths : LinkedList<String>
-            -locations : HashMap<String, tinyLocation>
-            +config()
-            +config(confPath : String)
+            -locations : HashMap<String, TinyLocation>
+            +Config()
+            +Config(confPath : String)
             +getConfigFilePath() : String
             +getDomain() : String
             +setDomain(newDomain : String) : void
             +getPort() : int
             +setPort(newPort : int) : void
             +getPaths() : LinkedList<String>
-            +getLocation(path : String) : tinyLocation
-            +addLocation(newLocation : tinyLocation, newPath : String) : void
+            +getLocation(path : String) : TinyLocation
+            +addLocation(newLocation : TinyLocation, newPath : String) : void
             +getRoot() : String
             +setRoot(newRoot : String) : void
             +isRedirect() : boolean
             +setRedirect(newRedirct : boolean) : void
         }
 
-        config *-left-> tinyLocation
+        Config *-left-> TinyLocation
     }
 
     package team.aurorahub.learn.tinyhttp.model{
-        class tinyHttpMsg{
+        class TinyHttpMsg{
             #contentLen : int
             #headerFields : HashMap<String, String>
             #tinyBody : ByteArrayOutputStream
             #inSocket : InputStream
-            +tinyHttpMsg(newInput : InputStream)
+            +TinyHttpMsg(newInput : InputStream)
             #{abstract}rebuildHeader() : String
             +{abstract}readAllBytesNow() : int
             +getContentLength() : int
@@ -64,7 +64,7 @@ package team.aurorahub.learn.tinyhttp{
             +getInputStream() : InputStream
         }
 
-        class request{
+        class Request{
             #tinyUri : String
             #tinyMethod : String
             #httpVer : String
@@ -76,62 +76,62 @@ package team.aurorahub.learn.tinyhttp{
             +getHttpVer() : String
         }
 
-        tinyHttpMsg <|-left- request
+        TinyHttpMsg <|-left- Request
 
-        class response{
+        class Response{
             #httpVer : String
             #statusCode : int
             #codeParse : String
             #fromOuter : boolean
-            +response(newInput : InputStream)
-            +response(code : int)
+            +Response(newInput : InputStream)
+            +Response(code : int)
             +writeBytes0(src : byte[], len : int) : int
-            +print(msg : String) : response
-            +println(msg : String) : response
-            +loadFile(path : String) : response
+            +print(msg : String) : Response
+            +println(msg : String) : Response
+            +loadFile(path : String) : Response
         }
 
-        tinyHttpMsg <|-- response
+        TinyHttpMsg <|-- Response
     }
-    package team.aurorahub.learn.tinyhttp.handler{
+    package team.aurorahub.learn.tinyhttp.Handler{
 
-        class handler{
-            -setting : config
+        class Handler{
+            -setting : Config
             -client : Socket
-            +handler(myset : config, newSocket : Socket)
+            +Handler(myset : Config, newSocket : Socket)
             -getLocation(uri : String) : String
             +run() : void
         }
 
-        handler o-left-> config
-        handler .right.> request
-        handler ...> response
+        Handler o-left-> Config
+        Handler .right.> Request
+        Handler ...> Response
     }
 
     package team.aurorahub.learn.tinyhttp.core{
-        class threadPoolManager{
+        class ThreadPoolManager{
             -maxCon : int
             -sSocket : ServerSocket
             -fixThreadPool ：ExecutorService
-            +threadPoolManager(max : int)
-            +run(myConf : config) : void
+            +ThreadPoolManager(max : int)
+            +run(myConf : Config) : void
         }
-        threadPoolManager ...> config
-        threadPoolManager ...> handler
+        ThreadPoolManager ...> Config
+        ThreadPoolManager ...> Handler
 
-        class server{
-            -manager : threadPoolManager
-            -myConf : config
-            +server(myConf : config) : void
+        class Server{
+            -manager : ThreadPoolManager
+            -myConf : Config
+            +Server(myConf : Config) : void
             +run() : void
             +{static}main(args : String[]) : void
         }
-        server *-right-> threadPoolManager
-        server o--> config
+        Server *-right-> ThreadPoolManager
+        Server o--> Config
     }
 
     package team.aurorahub.learn.tinyhttp.tinyUtils{
-        class ioTools{
+        class IoTools{
             +{static}CRLF : String
             +{static}BLANK : String
             +{static}readToString(confPath : String) : String
@@ -144,28 +144,28 @@ package team.aurorahub.learn.tinyhttp{
             +{static}getURIQuery(KVs : HashMap<String, String>) : String
         }
 
-        class tinyLogger{
+        class TinyLogger{
             -{static}logFile : String
             -{static}myLogger : Logger
             -{static}formatter : DateTimeFormatter
-            -tinyLogger()
+            -TinyLogger()
             +{static}setLogPath(path : String) : void
             +{static}getTinyLogger() : Logger
         }
 
-        handler .down.> tinyLogger
-        server .down.> tinyLogger
-        threadPoolManager ...>tinyLogger
+        Handler .down.> TinyLogger
+        Server .down.> TinyLogger
+        ThreadPoolManager ...>TinyLogger
 
-        class tinyLogFormat{
+        class TinyLogFormat{
             -format(record : LogRecord) : String
         }
 
-        tinyLogger+--tinyLogFormat
+        TinyLogger+--TinyLogFormat
     }
-    tinyLocation .down.> ioTools
-    config .down.> ioTools
-    response .up.> ioTools
-    request .up.> ioTools
+    TinyLocation .down.> IoTools
+    Config .down.> IoTools
+    Response .up.> IoTools
+    Request .up.> IoTools
 }
 @enduml

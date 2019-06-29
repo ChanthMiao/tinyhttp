@@ -7,9 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import team.aurorahub.learn.tinyhttp.config.config;
+import team.aurorahub.learn.tinyhttp.config.Config;
 import team.aurorahub.learn.tinyhttp.handler.*;
-import team.aurorahub.learn.tinyhttp.tinyUtils.tinyLogger;
+import team.aurorahub.learn.tinyhttp.tinyUtils.TinyLogger;
 
 /**
  * This class manages a fix thread-Pool, and invokes the
@@ -19,18 +19,18 @@ import team.aurorahub.learn.tinyhttp.tinyUtils.tinyLogger;
  * @author Chanth Miao
  * @version 1.0
  */
-public class threadPoolManager {
+public class ThreadPoolManager {
     private int maxCon;
     private ServerSocket sSocket;
     private ExecutorService fixThreadPool;
 
     /**
-     * Generate a {@code threadPoolManager} with specific max concurrence threads
+     * Generate a {@code ThreadPoolManager} with specific max concurrence threads
      * number.
      * 
      * @param max The number of threads you want.
      */
-    public threadPoolManager(int max) {
+    public ThreadPoolManager(int max) {
         maxCon = max;
         sSocket = null;
         fixThreadPool = Executors.newFixedThreadPool(maxCon);
@@ -39,14 +39,14 @@ public class threadPoolManager {
     /**
      * Run with specific configure.
      */
-    public void run(config myConf) {
-        Logger myLogger = tinyLogger.getTinyLogger();
+    public void run(Config myConf) {
+        Logger myLogger = TinyLogger.getTinyLogger();
         try {
             sSocket = new ServerSocket(myConf.getPort());
             while (true) {
                 Socket newSocket = sSocket.accept();
                 myLogger.info(newSocket.getRemoteSocketAddress().toString() + " new cennection established.");
-                fixThreadPool.execute(new handler(myConf, newSocket));
+                fixThreadPool.execute(new Handler(myConf, newSocket));
             }
         } catch (IOException e) {
             e.printStackTrace();

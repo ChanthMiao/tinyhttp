@@ -8,12 +8,12 @@ import java.util.Set;
 import org.apache.tika.Tika;
 
 /**
- * The ioTools class offers a tiny tool set to help your i/o operations.
+ * The IoTools class offers a tiny tool set to help your i/o operations.
  * 
  * @author Chanth Miao
  * @version 1.0
  */
-public class ioTools {
+public class IoTools {
 
     /** Const String "\r\n" */
     public static final String CRLF = "\r\n";
